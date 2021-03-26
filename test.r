@@ -26,7 +26,7 @@ tests <- tribble(~Zeit, ~Art,
          Dauer = case_when(Art == "Antigen" ~ 48,
                            TRUE ~ 72),
          Bis = Zeit + lubridate::hours(Dauer)) %>%
-  add_rownames(., var = "He") %>%
+  rownames_to_column(., var = "He") %>%
   mutate(He = ((as.numeric(He) - 1) %% 3 + 1) * .05)
 
 ggplot(data = tests) +
