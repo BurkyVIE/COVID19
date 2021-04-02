@@ -32,19 +32,27 @@ tests <- tribble(~Zeit, ~Art,
   rownames_to_column(., var = "He") %>%
   mutate(He = ((as.numeric(He) - 1) %% 3 + 1) * .05)
 
+range <- c(-51, 0, 4)
+frame <- now() %>%
+  floor_date(unit = "15 minute") + c(days(range[1]), days(range[2]), days(range[3]))
+
 ggplot(data = tests) +
-  geom_rect(mapping = aes(xmin = Zeit, xmax = Bis, ymin = 0, ymax = 1, fill = Art), alpha = .85) +
+  ggfx::with_blur(
+    geom_rect(mapping = aes(xmin = Zeit, xmax = Bis, ymin = 0, ymax = 1, fill = Art), alpha = .85),
+    sigma = 2.5) +
   geom_errorbarh(mapping = aes(y = He, xmin = Zeit, xmax = Bis), height = .02, color = "navy") +
-  geom_vline(xintercept = now(), linetype = "dotted", size = 1, color = "orangered") +
-  geom_label(x = now(), y = .85, label = str_replace(string = now(), pattern = " ", replacement = "\n"), size = 3, color = "orangered") +
-  scale_x_datetime(name = "Zeit [-90d ... jetzt ... +5d]", limits = c(now() - days(90), now() + days(5)), expand = c(.01, .01)) + 
+  geom_vline(xintercept = frame[2], linetype = "dotted", size = 1, color = "orangered") +
+  geom_label(x = frame[2], y = .85, label = str_replace(string = frame[2], pattern = " ", replacement = "\n"), size = 3, color = "orangered") +
+  scale_x_datetime(name = paste0("Zeit [", range[1], "d ... jetzt ... +", range[3], "d]"),
+                   date_labels = "%d. %B", minor_breaks = NULL,
+                   limits = frame[c(1, 3)], expand = c(.01, .01)) + 
   scale_y_continuous(name = "'Schutz'", breaks = c(0, 1), minor_breaks = NULL, expand = c(.015, .015)) +
   scale_fill_manual(name = "Testart", values = set_names(x = RColorBrewer::brewer.pal(3, "YlGn")[-1],
                                                          nm = c("Ag", "PCR"))) +
-  labs(title = "COVID-19 Tests", subtitle = "Thomas") +
+  labs(title = "COVID-19 Tests", subtitle = "Thomas") + 
   theme_minimal()-> p
 
 windows(16, 5)
 plot(p)
 
-rm(p)
+rm(range, frame, p)
