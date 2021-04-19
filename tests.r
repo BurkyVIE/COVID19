@@ -29,7 +29,9 @@ tests <- tribble(~Zeit, ~Art,
                  "5/4/2021 9.03", "Ag",
                  "7/4/2021 6.21", "PCR",
                  "10/4/2021 6.51", "PCR",
-                 "13/4/2021 4.56", "PCR") %>% 
+                 "13/4/2021 4.56", "PCR",
+                 "16/4/2021 4.53", "PCR",
+                 "19/4/2021 4.55", "PCR") %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
          Dauer = case_when(Art == "Ag" ~ 48,
                            TRUE ~ 72),
