@@ -5,7 +5,7 @@ library(lubridate)
 
 tests <- tribble(~Zeit, ~Art,
                  "5/12/2020 15.40", "Ag",
-                 "23/12/2020 16.31", "Ag", 
+                 "23/12/2020 16.31", "Ag",
                  "9/1/2021 10.33", "Ag",
                  "17/1/2021 9.18", "Ag",
                  "23/1/2021 9.20", "Ag",
@@ -31,7 +31,8 @@ tests <- tribble(~Zeit, ~Art,
                  "10/4/2021 6.51", "PCR",
                  "13/4/2021 4.56", "PCR",
                  "16/4/2021 4.53", "PCR",
-                 "19/4/2021 4.55", "PCR") %>% 
+                 "19/4/2021 4.55", "PCR",
+                 "22/4/2021 4.5?", "PCR) %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
          Dauer = case_when(Art == "Ag" ~ 48,
                            TRUE ~ 72),
@@ -40,7 +41,7 @@ tests <- tribble(~Zeit, ~Art,
   mutate(Horizont = ((as.numeric(Lfnr) - 1) %% 3 + 9) * .05,
          Key = strftime(Zeit, "%y%m%d"))
 
-# Verfügbare Befunde zuordnen
+# VerfÃ¼gbare Befunde zuordnen
 tests <- left_join(tests,
                    tibble(Befund = dir("Befunde/")) %>%
                      mutate(Key = str_sub(Befund, 1, 6),
