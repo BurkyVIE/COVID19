@@ -41,7 +41,7 @@ tests <- tribble(~Zeit, ~Art,
   mutate(Horizont = ((as.numeric(Lfnr) - 1) %% 3 + 9) * .05,
          Key = strftime(Zeit, "%y%m%d"))
 
-# Verfügbare Befunde zuordnen
+# Verfuegbare Befunde zuordnen
 tests <- left_join(tests,
                    tibble(Befund = dir("Befunde/")) %>%
                      mutate(Key = str_sub(Befund, 1, 6),
@@ -88,7 +88,7 @@ ggplot(data = testungen) +
   labs(title = "COVID-19 Tests", subtitle = "Thomas") + 
   theme_minimal(base_size = 13)-> p
 
-# Tortengrafik der TEstartanteile
+# Tortengrafik der Testartanteile
 ggplot(data = tests) +
   ggfx::with_blur(
     geom_bar(mapping = aes(x = "", fill = Art), width = 1, alpha = .75),
