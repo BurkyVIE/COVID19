@@ -88,6 +88,18 @@ ggplot(data = testungen) +
   labs(title = "COVID-19 Tests", subtitle = "Thomas") + 
   theme_minimal(base_size = 13)-> p
 
+# Tortengrafik der TEstartanteile
+ggplot(data = tests) +
+  ggfx::with_blur(
+    geom_bar(mapping = aes(x = "", fill = Art), width = 1, alpha = .75),
+    sigma = 2.5) +
+  scale_fill_manual(name = "Testart", values = set_names(x = RColorBrewer::brewer.pal(3, "YlGn")[-1],
+                                                         nm = c("Ag", "PCR"))) +
+  coord_polar(theta = "y") +
+  theme_minimal(base_size = 13) +
+  theme(axis.title = element_blank(),
+        panel.grid.major.x = element_blank()) -> p0
+
 # Plot
 windows(16, 5)
 plot(p)
