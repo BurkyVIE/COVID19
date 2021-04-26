@@ -1,8 +1,10 @@
-# Tracking Thomas' COVID19 tests
+# Tracking Thomas' COVID19 tests ----
 
+# Laden der libraries ----
 library(tidyverse)
 library(lubridate)
 
+# Datenerfassung ----
 tests <- tribble(~Zeit, ~Art,
                  "5/12/2020 15.40", "Ag",
                  "23/12/2020 16.31", "Ag",
@@ -32,7 +34,8 @@ tests <- tribble(~Zeit, ~Art,
                  "13/4/2021 4.56", "PCR",
                  "16/4/2021 4.53", "PCR",
                  "19/4/2021 4.55", "PCR",
-                 "22/4/2021 4.51", "PCR") %>% 
+                 "22/4/2021 4.51", "PCR",
+                 "24/4/2021 6.13", "PCR") %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
          Dauer = case_when(Art == "Ag" ~ 48,
                            TRUE ~ 72),
@@ -41,23 +44,23 @@ tests <- tribble(~Zeit, ~Art,
   mutate(Horizont = ((as.numeric(Lfnr) - 1) %% 3 + 9) * .05,
          Key = strftime(Zeit, "%y%m%d"))
 
-# Verfuegbare Befunde zuordnen
+# Verfuegbare Befunde zuordnen ----
 tests <- left_join(tests,
                    tibble(Befund = dir("Befunde/")) %>%
                      mutate(Key = str_sub(Befund, 1, 6),
                      Befund = paste0("Befunde/", Befund)),
                    by = "Key") 
 
-# Zeitraum fuer Darstellung (in Tagen)
+# Zeitraum fuer Darstellung (in Tagen) ----
 range <- c(-50, 0, 5)
 frame <- now() %>%
   floor_date(unit = "15 minute") + c(days(range[1]), days(range[2]), days(range[3]))
 
-# Auswahl relevanter Tests fuer Darstellung
+# Auswahl relevanter Tests fuer Darstellung ----
 testungen <- tests %>% 
   filter(Zeit > frame[1])
 
-# Bereinige ueberlappende Zeitraeume fuer Darstellung
+# Bereinige ueberlappende Zeitraeume fuer Darstellung ----
 zeitraeume <- testungen %>%
   mutate(Lfnr = c(0, cumsum(as.numeric(lead(Zeit)) >
                               cummax(as.numeric(Ende)))[-n()])) %>%
@@ -66,6 +69,7 @@ zeitraeume <- testungen %>%
             Ende = max(Ende),
             Anzahl = n())
 
+# Plot vorbereiten ----
 ggplot(data = testungen) +
   ggfx::with_blur(
     geom_rect(mapping = aes(xmin = Zeit, xmax = Ende, ymin = 0, ymax = 1, fill = Art), alpha = .75),
@@ -88,7 +92,7 @@ ggplot(data = testungen) +
   labs(title = "COVID-19 Tests", subtitle = "Thomas") + 
   theme_minimal(base_size = 13)-> p
 
-# Tortengrafik der Testartanteile
+# Tortengrafik der Testartanteile ----
 ggplot(data = tests) +
   ggfx::with_blur(
     geom_bar(mapping = aes(x = "", fill = Art), width = 1, alpha = .75),
@@ -100,9 +104,9 @@ ggplot(data = tests) +
   theme(axis.title = element_blank(),
         panel.grid.major.x = element_blank()) -> p0
 
-# Plot
+# Plot ----
 windows(16, 5)
 plot(p)
 
-# Aufraeumen
+# Aufraeumen ----
 rm(range, frame, testungen, zeitraeume, p)
