@@ -59,8 +59,7 @@ ggplot(data = testungen) +
   ggfx::with_shadow(
     geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, size = 1.5, color = "royalblue"),
     color = "royalblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
-  geom_label(x = frame[2], y = .85, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"),
-                        size = 4, color = "orangered") +
+  geom_label(x = frame[2], y = .85, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   scale_x_datetime(name = paste0("Zeit [", range[1], "d ... jetzt ... +", range[3], "d]"),
                    date_labels = "%e. %B", minor_breaks = NULL,
                    limits = frame[c(1, 3)], expand = c(.01, .01)) + 
