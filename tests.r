@@ -1,41 +1,24 @@
-# Tracking Thomas' COVID19 tests ----
+# Tracking Thomas' COVID19 tests
 
 # Laden der libraries ----
 library(tidyverse)
 library(lubridate)
 
+# Zeitraum fuer Darstellung (in Tagen) ----
+range <- c(-50, 0, 5)
+frame <- now() %>%
+  floor_date(unit = "15 minute") + c(days(range[1]), days(range[2]), days(range[3]))
+
 # Datenerfassung ----
 tests <- tribble(~Zeit, ~Art,
-                 "5/12/2020 15.40", "Ag",
-                 "23/12/2020 16.31", "Ag",
-                 "9/1/2021 10.33", "Ag",
-                 "17/1/2021 9.18", "Ag",
-                 "23/1/2021 9.20", "Ag",
-                 "30/1/2021 9.25", "Ag",
-                 "7/2/2021 15.59", "Ag",
-                 "13/2/2021 9.48", "Ag",
-                 "20/2/2021 9.55", "Ag",
-                 "25/2/2021 18.04", "Ag",
-                 "27/2/2021 9.57", "Ag",
-                 "6/3/2021 9.44", "Ag",
-                 "12/3/2021 16.26", "Ag",
-                 "18/3/2021 4.46", "PCR",
-                 "20/3/2021 9.48", "Ag",
-                 "21/3/2021 18.08", "Ag",
-                 "23/3/2021 4.58", "PCR",
-                 "25/3/2021 5.01", "PCR",
-                 "28/3/2021 9.20", "Ag",
-                 "29/3/2021 7.42", "PCR",
-                 "1/4/2021 6.21", "PCR",
-                 "3/4/2021 9.38", "Ag",
-                 "5/4/2021 9.03", "Ag",
-                 "7/4/2021 6.21", "PCR",
-                 "10/4/2021 6.51", "PCR",
-                 "13/4/2021 4.56", "PCR",
-                 "16/4/2021 4.53", "PCR",
-                 "19/4/2021 4.55", "PCR",
-                 "22/4/2021 4.51", "PCR",
-                 "24/4/2021 6.13", "PCR") %>% 
+                 "5/12/2020 15.40", "Ag", "23/12/2020 16.31", "Ag", "9/1/2021 10.33", "Ag",  "17/1/2021 9.18", "Ag",
+                 "23/1/2021 9.20", "Ag",  "30/1/2021 9.25", "Ag",   "7/2/2021 15.59", "Ag",  "13/2/2021 9.48", "Ag",
+                 "20/2/2021 9.55", "Ag",  "25/2/2021 18.04", "Ag",  "27/2/2021 9.57", "Ag",  "6/3/2021 9.44", "Ag",
+                 "12/3/2021 16.26", "Ag", "18/3/2021 4.46", "PCR",  "20/3/2021 9.48", "Ag",  "21/3/2021 18.08", "Ag",
+                 "23/3/2021 4.58", "PCR", "25/3/2021 5.01", "PCR",  "28/3/2021 9.20", "Ag",  "29/3/2021 7.42", "PCR",
+                 "1/4/2021 6.21", "PCR",  "3/4/2021 9.38", "Ag",    "5/4/2021 9.03", "Ag",   "7/4/2021 6.21", "PCR",
+                 "10/4/2021 6.51", "PCR", "13/4/2021 4.56", "PCR",  "16/4/2021 4.53", "PCR", "19/4/2021 4.55", "PCR",
+                 "22/4/2021 4.51", "PCR", "24/4/2021 6.13", "PCR",  "26/4/2021 5.12", "PCR") %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
          Dauer = case_when(Art == "Ag" ~ 48,
                            TRUE ~ 72),
@@ -50,11 +33,6 @@ tests <- left_join(tests,
                      mutate(Key = str_sub(Befund, 1, 6),
                      Befund = paste0("Befunde/", Befund)),
                    by = "Key") 
-
-# Zeitraum fuer Darstellung (in Tagen) ----
-range <- c(-50, 0, 5)
-frame <- now() %>%
-  floor_date(unit = "15 minute") + c(days(range[1]), days(range[2]), days(range[3]))
 
 # Auswahl relevanter Tests fuer Darstellung ----
 testungen <- tests %>% 
@@ -91,18 +69,6 @@ ggplot(data = testungen) +
                                                          nm = c("Ag", "PCR"))) +
   labs(title = "COVID-19 Tests", subtitle = "Thomas") + 
   theme_minimal(base_size = 13)-> p
-
-# Tortengrafik der Testartanteile ----
-ggplot(data = tests) +
-  ggfx::with_blur(
-    geom_bar(mapping = aes(x = "", fill = Art), width = 1, alpha = .75),
-    sigma = 2.5) +
-  scale_fill_manual(name = "Testart", values = set_names(x = RColorBrewer::brewer.pal(3, "YlGn")[-1],
-                                                         nm = c("Ag", "PCR"))) +
-  coord_polar(theta = "y") +
-  theme_minimal(base_size = 13) +
-  theme(axis.title = element_blank(),
-        panel.grid.major.x = element_blank()) -> p0
 
 # Plot ----
 windows(16, 5)
