@@ -1,4 +1,4 @@
-# Tracking Thomas' COVID19 tests
+# Thomas' COVID19 tests
 
 # Laden der libraries ----
 library(tidyverse)
@@ -10,29 +10,35 @@ frame <- now() %>%
   floor_date(unit = "15 minute") + c(days(range[1]), days(range[2]), days(range[3]))
 
 # Datenerfassung ----
-tests <- tribble(~Zeit, ~Art,
-                 "5/12/2020 15.40", "Ag", "23/12/2020 16.31", "Ag", "9/1/2021 10.33", "Ag",  "17/1/2021 9.18", "Ag",  #  1
-                 "23/1/2021 9.20", "Ag",  "30/1/2021 9.25", "Ag",   "7/2/2021 15.59", "Ag",  "13/2/2021 9.48", "Ag",  #  5
-                 "20/2/2021 9.55", "Ag",  "25/2/2021 18.04", "Ag",  "27/2/2021 9.57", "Ag",  "6/3/2021 9.44", "Ag",   #  9
-                 "12/3/2021 16.26", "Ag", "18/3/2021 4.46", "PCR",  "20/3/2021 9.48", "Ag",  "21/3/2021 18.08", "Ag", # 13
-                 "23/3/2021 4.58", "PCR", "25/3/2021 5.01", "PCR",  "28/3/2021 9.20", "Ag",  "29/3/2021 7.42", "PCR", # 17
-                 "1/4/2021 6.21", "PCR",  "3/4/2021 9.38", "Ag",    "5/4/2021 9.03", "Ag",   "7/4/2021 6.21", "PCR",  # 21
-                 "10/4/2021 6.51", "PCR", "13/4/2021 4.56", "PCR",  "16/4/2021 4.53", "PCR", "19/4/2021 4.55", "PCR", # 25
-                 "22/4/2021 4.51", "PCR", "24/4/2021 6.13", "PCR",  "26/4/2021 5.12", "PCR") %>% 
-  mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
-         Dauer = case_when(Art == "Ag" ~ 48,
-                           TRUE ~ 72),
-         Ende = Zeit + lubridate::hours(Dauer)) %>%
-  rownames_to_column(., var = "Lfnr") %>%
-  mutate(Horizont = ((as.numeric(Lfnr) - 1) %% 3 + 9) * .05,
-         Key = strftime(Zeit, "%y%m%d"))
+tests <-
+  tribble(~Zeit, ~Art, ~Anbieter,
+          "5/12/2020 15.40", "Ag", "BM", "23/12/2020 16.31", "Ag", "MA", "9/1/2021 10.33", "Ag", "BM",  "17/1/2021 9.18", "Ag", "BM",  #  1
+          "23/1/2021 9.20", "Ag", "MA",  "30/1/2021 9.25", "Ag", "MA",   "7/2/2021 15.59", "Ag", "MA",  "13/2/2021 9.48", "Ag", "MA",  #  5
+          "20/2/2021 9.55", "Ag", "MA",  "25/2/2021 18.04", "Ag", "MA",  "27/2/2021 9.57", "Ag", "MA",  "6/3/2021 9.44", "Ag", "MA",   #  9
+          "12/3/2021 16.26", "Ag", "MA", "18/3/2021 4.46", "PCR", "LH",  "20/3/2021 9.48", "Ag", "MA",  "21/3/2021 18.08", "Ag", "MA", # 13
+          "23/3/2021 4.58", "PCR", "LH", "25/3/2021 5.01", "PCR", "LH",  "28/3/2021 9.20", "Ag", "MA",  "29/3/2021 7.42", "PCR", "LH", # 17
+          "1/4/2021 6.21", "PCR", "LH",  "3/4/2021 9.38", "Ag", "MA",    "5/4/2021 9.03", "Ag", "MA",   "7/4/2021 6.21", "PCR", "LH",  # 21
+          "10/4/2021 6.51", "PCR", "LH", "13/4/2021 4.56", "PCR", "LH",  "16/4/2021 4.53", "PCR", "LH", "19/4/2021 4.55", "PCR", "LH", # 25
+          "22/4/2021 4.51", "PCR", "LH", "24/4/2021 6.13", "PCR", "LH",  "26/4/2021 5.12", "PCR", "LH") %>% 
+  rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
+  mutate(Lfnr = as.numeric(Lfnr),
+         Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
+         Dauer = case_when(Art == "Ag" ~ 48, # Geltungsdauern
+                           Art == "PCR" ~ 72),
+         Ende = Zeit + lubridate::hours(Dauer),
+         Key = strftime(Zeit, "%y%m%d"), # Fuer spaetere Befundzuordnung
+         Anbieter = factor(Anbieter, levels = c("BM", "MA", "LH"),
+                           labels = c('Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz, "Österreich testet"',
+                                      'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
+                                      'LeadHorizon, "Alles gurgelt!"')))
 
 # Verfuegbare Befunde zuordnen ----
 tests <- left_join(tests,
                    tibble(Befund = dir("Befunde/")) %>%
                      mutate(Key = str_sub(Befund, 1, 6),
-                     Befund = paste0("Befunde/", Befund)),
-                   by = "Key") 
+                            Befund = paste0("Befunde/", Befund)),
+                   by = "Key")  %>% 
+  relocate(Anbieter, .after = last_col()) # Verschiebe Testanbieter ans Ende
 
 # Auswahl relevanter Tests fuer Darstellung ----
 testungen <- tests %>% 
@@ -54,7 +60,8 @@ ggplot(data = testungen) +
     sigma = 2.5) +
   geom_vline(xintercept = frame[2], linetype = "dotted", size = 1, color = "orangered") +
   ggfx::with_shadow(
-    geom_errorbarh(mapping = aes(y = Horizont, xmin = Zeit, xmax = Ende), height = .02, size = 1.1, color = "steelblue"),
+    geom_errorbarh(mapping = aes(y = ((Lfnr - 1) %% 3 + 9) * .05,
+                                 xmin = Zeit, xmax = Ende), height = .02, size = 1.1, color = "steelblue"),
     color = "steelblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
   ggfx::with_shadow(
     geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, size = 1.5, color = "royalblue"),
