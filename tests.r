@@ -30,7 +30,7 @@ tests <- tibble(
          Anbieter = factor(Anbieter, levels = c("BM", "MA", "LH"),
                            labels = c('Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz, "Österreich testet"',
                                       'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
-                                      'LeadHorizon, "Alles gurgelt!"')))
+                                      'LEAD Horizon, "Alles gurgelt!"')))
 
 # Verfuegbare Befunde zuordnen ----
 tests <- left_join(tests,
