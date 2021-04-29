@@ -1,6 +1,6 @@
-# Thomas' COVID19 tests
+# Thomas' COVID19 Tests
 
-# Laden der libraries ----
+# Laden der Libraries ----
 library(tidyverse)
 library(lubridate)
 
