@@ -37,8 +37,11 @@ tests <- left_join(tests,
                    tibble(Befund = dir("Befunde/")) %>%
                      mutate(Key = str_sub(Befund, 1, 6),
                             Befund = paste0("Befunde/", Befund)),
-                   by = "Key")  %>% 
-  relocate(Anbieter, .after = last_col()) # Verschiebe Testanbieter ans Ende
+                   by = "Key")
+
+# Verschiebe Testanbieter ans Ende
+tests <- tests %>% 
+  relocate(Anbieter, .after = last_col())
 
 # Auswahl relevanter Tests fuer Darstellung ----
 testungen <- tests %>% 
