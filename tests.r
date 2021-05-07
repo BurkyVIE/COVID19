@@ -5,7 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 # Zeitraum fuer Darstellung (in Tagen) ----
-range <- c(-50, 0, 5)
+range <- c(-56, 0, 3) # 56 Tage = 8 Wochen
 frame <- now() %>%
   floor_date(unit = "10 minute") + c(days(range[1]), days(range[2]), days(range[3]))
 
@@ -46,7 +46,9 @@ tests <- tests %>%
 
 # Auswahl relevanter Tests fuer Darstellung ----
 testungen <- tests %>% 
-  filter(Zeit > frame[1])
+  filter(Zeit > frame[1]) %>% 
+  mutate(Zeit = case_when(frame[1] %within% interval(Zeit, Ende) ~ frame[1], # Abgeschnittene Testzeitraeume bei -50d -> Verscheiebe Testzeitpunkt
+                          TRUE ~ Zeit))
 
 # Bereinige ueberlappende Zeitraeume fuer Darstellung ----
 zeitraeume <- testungen %>%
