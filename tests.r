@@ -40,7 +40,7 @@ tests <- left_join(tests,
                             Befund = paste0("Befunde/", Befund)),
                    by = "Key")
 
-# Verschiebe Testanbieter ans Ende
+# Verschiebe Testanbieter ans Ende ----
 tests <- tests %>% 
   relocate(Anbieter, .after = last_col())
 
