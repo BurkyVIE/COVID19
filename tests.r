@@ -10,6 +10,7 @@ frame <- now() %>%
   floor_date(unit = "10 minute") + c(days(range[1]), days(range[2]), days(range[3]))
 
 # Datenerfassung ----
+## Tests ----
 tests <- tibble(
   Data = c("5/12/2020/15/40 Ag BM", "23/12/2020/16/31 Ag MA", "9/1/2021/10/33 Ag BM",  "17/1/2021/9/18 Ag BM",  #  1
            "23/1/2021/9/20 Ag MA",  "30/1/2021/9/25 Ag MA",   "7/2/2021/15/59 Ag MA",  "13/2/2021/9/48 Ag MA",  #  5
@@ -32,6 +33,12 @@ tests <- tibble(
                            labels = c('Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz, "Österreich testet"',
                                       'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
                                       'LEAD Horizon, "Alles gurgelt!"')))
+
+## Impfung ----
+impf <- tribble(~Zeit, ~Name,
+                "10/5/2021/13/10", "Moderna (1)",
+                "15/6/2021/8/40", "Moderna (2)") %>% 
+  mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"))
 
 # Verfuegbare Befunde zuordnen ----
 tests <- left_join(tests,
@@ -64,7 +71,10 @@ ggplot(data = testungen) +
   ggfx::with_blur(
     geom_rect(mapping = aes(xmin = Zeit, xmax = Ende, ymin = 0, ymax = 1, fill = Art), alpha = .75),
     sigma = 2.5) +
+  geom_vline(data = impf, mapping = aes(xintercept = Zeit), linetype = "solid", size = 1, color = "orangered") +
   geom_vline(xintercept = frame[2], linetype = "dotted", size = 1, color = "orangered") +
+  geom_label(data = impf, mapping = aes(x = Zeit, label = Name), y = .95, size = 2.5, color = "orangered") +
+  geom_label(x = frame[2], y = .85, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   ggfx::with_shadow(
     geom_errorbarh(mapping = aes(y = ((Lfnr - 1) %% 3 + 9) * .05,
                                  xmin = Zeit, xmax = Ende), height = .02, size = 1.1, color = "steelblue"),
@@ -72,7 +82,6 @@ ggplot(data = testungen) +
   ggfx::with_shadow(
     geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, size = 1.5, color = "royalblue"),
     color = "royalblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
-  geom_label(x = frame[2], y = .85, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   scale_x_datetime(name = paste0("Zeit [", range[1], "d ... jetzt ... +", range[3], "d]"),
                    date_labels = "%e. %B", minor_breaks = NULL,
                    limits = frame[c(1, 3)], expand = c(.01, .01)) + 
