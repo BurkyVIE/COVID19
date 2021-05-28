@@ -22,7 +22,7 @@ tests <- tibble(
            "22/4/2021/4/51 PCR LH", "24/4/2021/6/13 PCR LH",  "26/4/2021/5/12 PCR LH", "28/4/2021/5/2 PCR LH",  # 29
            "30/4/2021/4/55 PCR LH", "3/5/2021/5/3 PCR LH",    "6/5/2021/4/56 PCR LH",  "8/5/2021/6/5 PCR LH",   # 33
            "10/5/2021/4/57 PCR LH", "12/5/2021/4/51 PCR LH",  "15/5/2021/7/7 PCR LH",  "17/5/2021/4/54 PCR LH", # 37
-           "20/5/2021/4/52 PCR LH", "22/5/2021/6/15 PCR LH",  "25/5/2021/4/59 PCR LH")) %>% 
+           "20/5/2021/4/52 PCR LH", "22/5/2021/6/15 PCR LH",  "25/5/2021/4/59 PCR LH", "27/5/2021/5/1 PCR LH")) %>% 
   separate(Data, into = c("Zeit", "Art", "Anbieter"), sep = " ") %>% 
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
@@ -98,4 +98,4 @@ windows(16, 5)
 plot(p)
 
 # Aufraeumen ----
-rm(range, frame, testungen, zeitraeume, p)
+rm(range, frame, impf, testungen, zeitraeume, p)
