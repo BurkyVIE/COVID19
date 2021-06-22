@@ -24,8 +24,8 @@ tests <- tibble(
            "10/5/2021/4/57 PCR LH", "12/5/2021/4/51 PCR LH",  "15/5/2021/7/7 PCR LH",  "17/5/2021/4/54 PCR LH", # 37
            "20/5/2021/4/52 PCR LH", "22/5/2021/6/15 PCR LH",  "25/5/2021/4/59 PCR LH", "27/5/2021/5/1 PCR LH",  # 41
            "29/5/2021/8/22 PCR LH", "31/5/2021/4/57 PCR LH",  "2/6/2021/4/54 PCR LH",  "5/6/2021/6/27 PCR LH",  # 45
-		   "7/6/2021/5/10 PCR LH",  "10/6/2021/5/7 PCR LH",   "12/6/2021/6/54 PCR LH", "14/6/2021/4/55 PCR LH", # 49
-		   "17/6/2021/4/49 PCR LH", "19/6/2021/7/15 PCR LH")) %>% 
+           "7/6/2021/5/10 PCR LH",  "10/6/2021/5/7 PCR LH",   "12/6/2021/6/54 PCR LH", "14/6/2021/4/55 PCR LH", # 49
+           "17/6/2021/4/49 PCR LH", "19/6/2021/7/15 PCR LH",  "21/6/2021/5/6 PCR LH")) %>% 
   separate(Data, into = c("Zeit", "Art", "Anbieter"), sep = " ") %>% 
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
