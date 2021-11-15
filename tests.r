@@ -36,8 +36,10 @@ tests <- tibble(
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
          Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
-         Dauer = case_when(Art == "Ag" ~ 48, # Geltungsdauern
-                           Art == "PCR" ~ 72),
+         Dauer = case_when(Art == "Ag" & Zeit < 1630454400 ~ 48, # Geltungsdauern (2021/09/01T0000 = 1630454400)
+                           Art == "Ag" & Zeit >= 1630454400 ~ 24,
+                           Art == "PCR" & Zeit < 1630454400 ~ 72,
+                           Art == "PCR" & Zeit >= 1630454400 ~ 48),
          Ende = Zeit + lubridate::hours(Dauer),
          Key = strftime(Zeit, "%y%m%d"), # Fuer spaetere Befundzuordnung
          Anbieter = factor(Anbieter, levels = c("BM", "MA", "LH"),
