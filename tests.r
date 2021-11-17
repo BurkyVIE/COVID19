@@ -51,7 +51,8 @@ tests <- tibble(
 ## Impfung ----
 impf <- tribble(~Zeit, ~Name,
                 "10/5/2021/13/10", "Moderna (1)\n10. Mai",
-                "15/6/2021/8/40", "Moderna (2)\n15. Juni") %>% 
+                "15/6/2021/8/40", "Moderna (2)\n15. Juni",
+                "16/11/2021/7/30", "Moderna (3)\n16. November") %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"))
 
 # Verfuegbare Befunde zuordnen ----
