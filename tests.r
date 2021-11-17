@@ -88,8 +88,8 @@ ggplot(data = testungen) +
     sigma = 2.5) +
   geom_vline(data = impf, mapping = aes(xintercept = Zeit), linetype = "solid", size = 1, color = "orangered") +
   geom_vline(xintercept = frame[2], linetype = "dotted", size = 1, color = "orangered") +
-  geom_label(data = impf, mapping = aes(x = Zeit, label = Name), y = .95, size = 2.5, color = "orangered") +
-  geom_label(x = frame[2], y = .85, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
+  geom_label(data = impf, mapping = aes(x = Zeit, label = Name), y = .925, size = 2.5, color = "orangered") +
+  geom_label(x = frame[2], y = .8, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   ggfx::with_shadow(
     geom_errorbarh(mapping = aes(y = ((Lfnr - 1) %% 3 + 9) * .05,
                                  xmin = Zeit, xmax = Ende), height = .02, size = 1.1, color = "steelblue"),
