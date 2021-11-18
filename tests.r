@@ -32,7 +32,7 @@ tests <- tibble(
            "11/9/2021/7/48 PCR LH",   "18/9/2021/7/0 PCR LH",    "20/9/2021/7/14 PCR LH",   "22/9/2021/6/50 PCR LH",   "24/9/2021/8/35 PCR LH",   #  90
            "5/10/2021/5/10 PCR LH",   "9/10/2021/7/56 PCR LH",   "15/10/2021/10/40 PCR LH", "19/10/2021/11/2 PCR LH",  "25/10/2021/6/43 PCR LH",  #  95
            "30/10/2021/7/39 PCR LH",  "6/11/2021/8/17 PCR LH",   "8/11/2021/11/52 PCR LH",  "10/11/2021/11/16 PCR LH", "13/11/2021/8/36 PCR LH",  # 100
-           "16/11/2021/11/7 PCR LH")) %>% #,  "18/11/2021/11/. PCR LH"
+           "16/11/2021/11/7 PCR LH")) %>% #,  "18/11/2021/10/. PCR LH"
   separate(Data, into = c("Zeit", "Art", "Anbieter"), sep = " ") %>% 
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
@@ -50,8 +50,8 @@ tests <- tibble(
                                       'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
                                       'LEAD Horizon, "Alles gurgelt!"')))
 
-## Impfung ----
-impf <- tribble(~Zeit, ~Name,
+## Ereignisse ----
+event <- tribble(~Zeit, ~Name,
                 "10/5/2021/13/10", "Moderna (1)\n10. Mai",
                 "15/6/2021/8/40", "Moderna (2)\n15. Juni",
                 "16/11/2021/7/30", "Moderna (3)\n16. November") %>% 
@@ -88,9 +88,9 @@ ggplot(data = testungen) +
   ggfx::with_blur(
     geom_rect(mapping = aes(xmin = Zeit, xmax = Ende, ymin = 0, ymax = 1, fill = Art), alpha = .75),
     sigma = 2.5) +
-  geom_vline(data = impf, mapping = aes(xintercept = Zeit), linetype = "solid", size = 1, color = "orangered") +
+  geom_vline(data = event, mapping = aes(xintercept = Zeit), linetype = "solid", size = 1, color = "orangered") +
   geom_vline(xintercept = frame[2], linetype = "dotted", size = 1, color = "orangered") +
-  geom_label(data = impf, mapping = aes(x = Zeit, label = Name), y = .925, size = 2.5, color = "orangered") +
+  geom_label(data = event, mapping = aes(x = Zeit, label = Name), y = .925, size = 2.5, color = "orangered") +
   geom_label(x = frame[2], y = .8, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   ggfx::with_shadow(
     geom_errorbarh(mapping = aes(y = ((Lfnr - 1) %% 3 + 9) * .05,
@@ -100,7 +100,7 @@ ggplot(data = testungen) +
     geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, size = 1.5, color = "royalblue"),
     color = "royalblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
   scale_x_datetime(name = paste0("Zeit [", range[1], "d ... jetzt ... +", range[3], "d]"),
-                   date_labels = "%e. %B", minor_breaks = NULL,
+                   date_labels = "%e. %B %y", minor_breaks = NULL,
                    limits = frame[c(1, 3)], expand = c(.01, .01)) + 
   scale_y_continuous(name = "", breaks = c(0, 1), labels = NULL, minor_breaks = NULL, expand = c(.015, .015)) +
   scale_fill_manual(name = "Testart", values = set_names(x = RColorBrewer::brewer.pal(3, "YlGn")[-1],
