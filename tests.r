@@ -66,6 +66,7 @@ tests <- left_join(tests,
 
 # Verschiebe Testanbieter ans Ende ----
 tests <- tests %>% 
+  relocate(Prot, .after = Zeit) %>%
   relocate(Anbieter, .after = last_col())
     
 # Auswahl relevanter Tests fuer Darstellung ----
