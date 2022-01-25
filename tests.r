@@ -38,7 +38,7 @@ tests <- tibble(
            "16/12/2021/11/1 PCR LH"   "18/12/2021/7/40 PCR LH",  "20/12/2021/10/49 PCR LH", "22/12/2021/11/19 PCR LH", "24/12/2021/8/6 PCR LH"    # 115
            "27/12/2021/10/54 PCR LH", "29/12/2021/11/3 PCR LH",  "31/12/2021/8/23 PCR LH",  "3/1/2022/11/0 PCR LH",    "5/1/2022/11/7 PCR LH"     # 120
            "7/1/2022/11/15 PCR LH",   "10/1/2022/9/47 PCR LH",   "12/1/2022/10/5 PCR LH",   "14/1/2022/10/23 PCR LH",  "17/1/2022/10/26 PCR LH"   # 125
-           "19/1/2022/10/24 PCR LH")) %>% 
+           "19/1/2022/10/24 PCR LH",  "21/1/2022/10/19 PCR LH",. "24/1/2022/18/57 PCR RB")) %>% 
   separate(Data, into = c("Zeit", "Art", "Anbieter"), sep = " ") %>% 
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
@@ -51,10 +51,11 @@ tests <- tibble(
                            Art == "PCR" & Prot == 1 ~ 48),
          Ende = Zeit + lubridate::hours(Dauer),
          Key = strftime(Zeit, "%y%m%d"), # Fuer spaetere Befundzuordnung
-         Anbieter = factor(Anbieter, levels = c("BM", "MA", "LH"),
+         Anbieter = factor(Anbieter, levels = c("BM", "MA", "LH", "RB"),
                            labels = c('Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz, "Österreich testet"',
                                       'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
-                                      'LEAD Horizon, "Alles gurgelt!"')))
+                                      'Lifebrain - Alles gurgelt',
+                                      'Spa Therme Blumau, SYNLAB IMCL")))
 
 ## Ereignisse ----
 event <- tribble(~Zeit, ~Name,
