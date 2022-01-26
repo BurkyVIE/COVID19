@@ -54,7 +54,7 @@ tests <- tibble(
          Anbieter = factor(Anbieter, levels = c("BM", "MA", "AG", "RB"),
                            labels = c('Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz, "Österreich testet"',
                                       'MA 15 - Stadt Wien Gesundheitsdienst, Teststraße',
-                                      'Lifebrain - Alles gurgelt',
+                                      'Lifebrain - "Alles gurgelt!"',
                                       'Spa Therme Blumau, SYNLAB IMCL')))
 
 ## Ereignisse ----
