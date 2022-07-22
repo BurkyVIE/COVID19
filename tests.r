@@ -72,7 +72,7 @@ event <- tribble(~Zeit, ~Name,
                 "16/11/2021/8/49", "Dosis 3\n(Moderna)\n16. November",
                 "27/6/2022/15/35", "Auffrischung\n(Pfizer-Biontech)\n27. Juni",
                 "18/7/2022/6/13", "Infektion\n(Ct = 21.5)\n18. Juli",
-                "22/7/2022/6/8", "Freitesten\n(Ct = 34.21, 34.89)\n22. Juli") %>% 
+                "22/7/2022/6/8", "Freitesten\n(Ct = 34.21/34.89)\n22. Juli") %>% 
   mutate(Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"))
 
 # Verfuegbare Befunde zuordnen ----
