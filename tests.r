@@ -49,7 +49,8 @@ tests <- tibble(
            "13/6/2022/10/3 PCR AG",   "20/6/2022/6/59 PCR AG",   "27/6/2022/6/30 PCR AG",   "4/7/2022/7/1 PCR AG",     "8/7/2022/9/20 PCR AG",    # 170
            "18/8/2022/6/54 PCR AG",   "21/8/2022/7/23 PCR AG",   "29/8/2022/6/24 PCR AG",   "1/9/2022/9/35 PCR AG",    "5/9/2022/6/34 PCR AG",    # 175
            "12/9/2022/7/34 PCR AG",   "19/9/2022/7/29 PCR AG",   "26/9/2022/7/37 PCR AG",   "3/10/2022/7/2 PCR AG",    "8/10/2022/7/53 PCR AG",   # 180
-           "12/10/2022/7/6 PCR AG",   "18/10/2022/7/7 PCR AG",   "24/10/2022/7/44 PCR AG",  "31/10/2022/7/21 PCR AG",  "7/11/2022/6/55 PCR AG")) %>% 
+           "12/10/2022/7/6 PCR AG",   "18/10/2022/7/7 PCR AG",   "24/10/2022/7/44 PCR AG",  "31/10/2022/7/21 PCR AG",  "7/11/2022/6/55 PCR AG",   # 185
+           "14/11/2022/7/28 PCR AG")) %>% 
   separate(Data, into = c("Zeit", "Art", "Anbieter"), sep = " ") %>% 
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
@@ -110,16 +111,16 @@ ggplot(data = testungen) +
   ggfx::with_blur(
     geom_rect(mapping = aes(xmin = Zeit, xmax = Ende, ymin = 0, ymax = 1, fill = Art), alpha = .75),
     sigma = 2.5) +
-  geom_vline(data = event, mapping = aes(xintercept = Zeit), linetype = "solid", lwd = 1, color = "orangered") +
-  geom_vline(xintercept = frame[2], linetype = "dotted", lwd = 1, color = "orangered") +
+  geom_vline(data = event, mapping = aes(xintercept = Zeit), linetype = "solid", linewidth = 1, color = "orangered") +
+  geom_vline(xintercept = frame[2], linetype = "dotted", linewidth = 1, color = "orangered") +
   geom_label(data = event, mapping = aes(x = Zeit, label = Name), y = .925, size = 2.5, color = "orangered") +
   geom_label(x = frame[2], y = .8, label = strftime(x = frame[2], format = "%e. %B\n%H:%M"), size = 4, color = "orangered") +
   ggfx::with_shadow(
     geom_errorbarh(mapping = aes(y = ((Lfnr - 1) %% 3 + 9) * .05,
-                                 xmin = Zeit, xmax = Ende), height = .02, size = 1.1, color = "steelblue"),
+                                 xmin = Zeit, xmax = Ende), height = .02, linewidth = 1.1, color = "steelblue"),
     color = "steelblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
   ggfx::with_shadow(
-    geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, size = 1.5, color = "royalblue"),
+    geom_errorbarh(data = zeitraeume, mapping = aes(y = .15, xmin = Von, xmax = Ende), height = .03, linewidth = 1.5, color = "royalblue"),
     color = "royalblue", x_offset = 0, y_offset = 4, sigma = 2.5) +
   scale_x_datetime(name = paste0("Zeit [", range[1], "d ... jetzt ... +", range[3], "d]"),
                    date_labels = "%e. %B %y", minor_breaks = NULL,
