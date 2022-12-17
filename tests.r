@@ -55,7 +55,7 @@ tests <- tibble(
   rownames_to_column(., var = "Lfnr") %>% # Zeilennummern - spaeter Ableitung der y-Koordinate im Plot (Range-Bars)
   mutate(Lfnr = as.numeric(Lfnr),
          Zeit = dmy_hm(Zeit, tz = "Europe/Vienna"),
-         Prot = case_when(Zeit >= 1630454400 ~ 1, # Protokoll für Geltungsdauern (2021/09/01T0000 = 1630454400)
+         Prot = case_when(Zeit >= 1630454400 & Zeit < 1671235200 ~ 1, # Protokoll für Geltungsdauern (2021/09/01T0000 = 1630454400; 2022/12/17T0000 = 1671235200)
                                TRUE ~ 0),
          Dauer = case_when(Art == "Ag" & Prot == 0 ~ 48,
                            Art == "Ag" & Prot == 1 ~ 24,
